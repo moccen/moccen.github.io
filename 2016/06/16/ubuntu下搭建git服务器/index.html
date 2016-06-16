@@ -7,14 +7,16 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <meta name="google-site-verification" content="" />
   
-  <title>Tony&#39;s blog</title>
+  <title>ubuntu下搭建git服务器</title>
   <meta name="author" content="Tony">
-   <meta name="description" content="June 16, 2016 10:29 AM
-ubuntu下搭建git服务器搭建环境 ubuntu LTS 16.4,客户端使用的是pc机（win10）。
-主要问题1.服务器端（管理机）为何需要创建ssh秘钥；2.为何要在/home/git/repositories/目录和/home/reposit">
+   <meta name="description" content="搭建环境 ubuntu LTS 16.4,客户端使用的是pc机（win10）。
+主要问题1.服务器端（管理机）为何需要创建ssh秘钥；2.为何要在/home/git/repositories/目录和/home/repositories之间做关联；
+
+步骤如下：
+#####一、安装ssh、git、py">
   
 
-  
+  <meta property="og:title" content="ubuntu下搭建git服务器"/>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta property="og:site_name" content="Tony&#39;s blog"/>
  <meta property="og:image" content="undefined"/>
@@ -44,7 +46,7 @@ ubuntu下搭建git服务器搭建环境 ubuntu LTS 16.4,客户端使用的是pc�
       
   
     <h1 class="page-title center">
-        
+        ubuntu下搭建git服务器
     </h1>
   
 
@@ -68,27 +70,26 @@ ubuntu下搭建git服务器搭建环境 ubuntu LTS 16.4,客户端使用的是pc�
     <div class="picture-container">
       
     </div>
-    <p>June 16, 2016 10:29 AM</p>
-<h1 id="ubuntu下搭建git服务器"><a href="#ubuntu下搭建git服务器" class="headerlink" title="ubuntu下搭建git服务器"></a>ubuntu下搭建git服务器</h1><p>搭建环境 ubuntu LTS 16.4,客户端使用的是pc机（win10）。</p>
+    <p>搭建环境 ubuntu LTS 16.4,客户端使用的是pc机（win10）。</p>
 <p><strong>主要问题</strong><br>1.服务器端（管理机）为何需要创建ssh秘钥；<br>2.为何要在/home/git/repositories/目录和/home/repositories之间做关联；</p>
 <hr>
 <p><strong>步骤如下：</strong></p>
-<p>#####一、安装ssh、git、python和gitosis等软件<br>1.安装openssh和git<br>  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ubuntu:~$ sudo apt-get install git-core openssh-server openssh-client</span><br></pre></td></tr></table></figure></p>
-<p>2.安装Python的setuptools，用来安装gitosis<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ubuntu:~$ sudo apt-get install python-setuptools</span><br></pre></td></tr></table></figure></p>
-<p>3.在安装gitosis之前，需要初始化git用户名和邮箱<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ubuntu:~$ git config --global user.name &quot;myname&quot;   </span><br><span class="line">ubuntu:~$ git config --global user.email &quot;******@test.com&quot;</span><br></pre></td></tr></table></figure></p>
-<p>4.安装gitosis，先clone gitosis项目，注意有两个“零”<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">cd /tmp</span><br><span class="line">ubuntu:~$ git clone https://github.com/res0nat0r/gitosis.git  </span><br><span class="line">cd gitosis</span><br><span class="line">sudo python setup.py install</span><br></pre></td></tr></table></figure></p>
+<p>#####一、安装ssh、git、python和gitosis等软件<br>1.安装openssh和git<br>  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ubuntu:~$ sudo apt-get install git-core openssh-server openssh-client</span><br></pre></td></tr></table></figure></p>
+<p>2.安装Python的setuptools，用来安装gitosis<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ubuntu:~$ sudo apt-get install python-setuptools</span><br></pre></td></tr></table></figure></p>
+<p>3.在安装gitosis之前，需要初始化git用户名和邮箱<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ubuntu:~$ git config --global user.name <span class="string">"myname"</span>   </span><br><span class="line">ubuntu:~$ git config --global user.email <span class="string">"******@test.com"</span></span><br></pre></td></tr></table></figure></p>
+<p>4.安装gitosis，先clone gitosis项目，注意有两个“零”<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /tmp</span><br><span class="line">ubuntu:~$ git <span class="built_in">clone</span> https://github.com/res0nat0r/gitosis.git  </span><br><span class="line"><span class="built_in">cd</span> gitosis</span><br><span class="line">sudo python setup.py install</span><br></pre></td></tr></table></figure></p>
 <hr>
-<p>#####二、创建git用户作为git服务器管理员<br>1.创建git账户<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ubuntu:/tmp/gitosis$ sudo useradd -m git  </span><br><span class="line">ubuntu:/tmp/gitosis$ sudo passwd git</span><br></pre></td></tr></table></figure></p>
-<p>2.然后再/home目录下创建一个项目仓库存储点，并设置只有git用户拥有所有权限，其他用户没有任何权限<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ubuntu:/tmp/gitosis$ sudo mkdir /home/gitrepository  </span><br><span class="line">ubuntu:/tmp/gitosis$ sudo chown git:git /home/gitrepository/  </span><br><span class="line">ubuntu:/tmp/gitosis$ sudo chmod 700 /home/gitrepository/</span><br></pre></td></tr></table></figure></p>
-<p>3.由于gitosis默认状态下会将仓库放在用户的repositories目录下，例如git用户的仓库地址默认在/home/git/repositories/目录下，这里我们需要创建一个链接映射。让他指向我们前面创建的专门用于存放项目的仓库目录/home/gitrepository<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ubuntu:/tmp/gitosis$ sudo ln -s /home/gitrepository /home/git/repositories</span><br></pre></td></tr></table></figure></p>
+<p>#####二、创建git用户作为git服务器管理员<br>1.创建git账户<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ubuntu:/tmp/gitosis$ sudo useradd -m git  </span><br><span class="line">ubuntu:/tmp/gitosis$ sudo passwd git</span><br></pre></td></tr></table></figure></p>
+<p>2.然后再/home目录下创建一个项目仓库存储点，并设置只有git用户拥有所有权限，其他用户没有任何权限<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ubuntu:/tmp/gitosis$ sudo mkdir /home/gitrepository  </span><br><span class="line">ubuntu:/tmp/gitosis$ sudo chown git:git /home/gitrepository/  </span><br><span class="line">ubuntu:/tmp/gitosis$ sudo chmod 700 /home/gitrepository/</span><br></pre></td></tr></table></figure></p>
+<p>3.由于gitosis默认状态下会将仓库放在用户的repositories目录下，例如git用户的仓库地址默认在/home/git/repositories/目录下，这里我们需要创建一个链接映射。让他指向我们前面创建的专门用于存放项目的仓库目录/home/gitrepository<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ubuntu:/tmp/gitosis$ sudo ln <span class="_">-s</span> /home/gitrepository /home/git/repositories</span><br></pre></td></tr></table></figure></p>
 <p>4.在服务器端生成ssh公钥，如果想在其他机器上管理也可以在其他机器上生成一个ssh的公钥，<strong>这里我认为应该在服务器中的git账户中生成秘钥并初始化gitosis</strong></p>
 <blockquote>
 <p><strong>4.生成本机密钥</strong><br>切换到个人机，如果已有~/.ssh/id_rsa.pub略过此步<br>ssh-keygen -t rsa<br>——《Git服务器Gitosis架设指南》</p>
 <hr>
 <p>初始化Git仓库需要一个建立一个管理员帐号，也是一个Git服务器的客户端用户，所以需要在客户端主机生成一个用户，并且生成ssh-key<br>——《ubuntu配置git服务器（gitosis）》</p>
 </blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ubuntu:/home/git$ ssh-keygen -t rsa</span><br></pre></td></tr></table></figure>
-<p>5.利用上一步中生成的ssh秘钥来初始化gitosis,首先要成为gitosis管理员,以下步骤都是在服务器上进行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">//在服务器上建管理员：</span><br><span class="line">sudo chmod a+r ~/.ssh/id_rsa.pub</span><br><span class="line">//利用/tmp/id_rsa.pub文件来初始化gitosis</span><br><span class="line">sudo -H -u git gitosis-init&lt; ~/.ssh/id_rsa.pub</span><br><span class="line">//修改post-update权限</span><br><span class="line">sudo chmod 755 /home/git/repositories/gitosis-admin.git/hooks/post-update</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ubuntu:/home/git$ ssh-keygen -t rsa</span><br></pre></td></tr></table></figure>
+<p>5.利用上一步中生成的ssh秘钥来初始化gitosis,首先要成为gitosis管理员,以下步骤都是在服务器上进行<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">//在服务器上建管理员：</span><br><span class="line">sudo chmod a+r ~/.ssh/id_rsa.pub</span><br><span class="line">//利用/tmp/id_rsa.pub文件来初始化gitosis</span><br><span class="line">sudo -H -u git gitosis-init&lt; ~/.ssh/id_rsa.pub</span><br><span class="line">//修改post-update权限</span><br><span class="line">sudo chmod 755 /home/git/repositories/gitosis-admin.git/hooks/post-update</span><br></pre></td></tr></table></figure></p>
 <p>期间提示如下信息表示成功</p>
 <blockquote>
 <p>Initialized empty Git repository in /home/pro_j/gitosis-admin.git/<br>Reinitialized existing Git repository in /home/pro_j/gitosis-admin.git/</p>
@@ -101,13 +102,13 @@ ubuntu下搭建git服务器搭建环境 ubuntu LTS 16.4,客户端使用的是pc�
 <blockquote>
 <p>下载仓库配置项目gitosis-admin到本地客户端<br>因为git仓库的配置文件都是以git方式来管理的，所以你需要先下载一份到客户端本地，步骤如下：<br>1）在你的用户目录下面创建一个临时目录work，<br>2）然后 进入到该目录：cd work，<br>3）然后执行命令：<br>// 命令中的ip改成你自己服务器的IP<br>正确：git clone git@ip:/home/git/repositories/gitosis-admin.git<br>//clone时不能用绝对路径，只能写相对于git用户home的相对路径<br>错误：git@ip:gitosis-admin.git<br><em>执行完成之后，work目录下会生成gitosis-admin目录，目录下面有一个<strong>gitosis.conf</strong>文件和一个<strong>keydir</strong>目录，它们将是下面配置任务的主要操作对象，请牢记它们的位置</em></p>
 </blockquote>
-<p>7.将gitosis-admin.git clone到本地后，对gitosis.conf文件和keydir文件进行配置<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[group first-pro]       //用户组名</span><br><span class="line"> members = jeff         //成员名，多个成员可以用空格隔开</span><br><span class="line"> writable = first-pro   //项目名及其用户对于此项目的权限，first-pro是git项目名称</span><br></pre></td></tr></table></figure></p>
+<p>7.将gitosis-admin.git clone到本地后，对gitosis.conf文件和keydir文件进行配置<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[group first-pro]       //用户组名</span><br><span class="line"> members = jeff         //成员名，多个成员可以用空格隔开</span><br><span class="line"> writable = first-pro   //项目名及其用户对于此项目的权限，first-pro是git项目名称</span><br></pre></td></tr></table></figure></p>
 <p>这段配置是新建了了一个“first-pro”的用户组，成员包括jeff，对git项目“first-pro”有写入权限</p>
 <blockquote>
 <p>gitosi.conf文件主要的作用是管理员可以编写其他人的权限：writable和 readonly . 这里设置权限 可以建立group设置<br>keydir 文件夹是存放其他人公钥的地方。而且必须注意 谁的公钥谁的名字的要求来存放</p>
 </blockquote>
-<p>8.在服务器中切换到git账户，新建git项目<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">cd /home/repositories</span><br><span class="line">mkdir test.git</span><br><span class="line">cd /test.git</span><br><span class="line">git init --bare</span><br></pre></td></tr></table></figure></p>
-<p>9.在客户机中clone服务器上的test.git项目，这里需要将test项目的读写权限赋给客户端用户<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[group test]       //用户组名</span><br><span class="line"> members = jeff    //成员名，多个成员可以用空格隔开</span><br><span class="line"> writable = test   //项目名及其用户对于此项目的权限，first-pro是git项目名称</span><br></pre></td></tr></table></figure></p>
+<p>8.在服务器中切换到git账户，新建git项目<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /home/repositories</span><br><span class="line">mkdir test.git</span><br><span class="line"><span class="built_in">cd</span> /test.git</span><br><span class="line">git init --bare</span><br></pre></td></tr></table></figure></p>
+<p>9.在客户机中clone服务器上的test.git项目，这里需要将test项目的读写权限赋给客户端用户<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[group <span class="built_in">test</span>]       //用户组名</span><br><span class="line"> members = jeff    //成员名，多个成员可以用空格隔开</span><br><span class="line"> writable = <span class="built_in">test</span>   //项目名及其用户对于此项目的权限，first-pro是git项目名称</span><br></pre></td></tr></table></figure></p>
 <p>10.在客户端clone的项目中添加文件，然后推送到服务器即可。</p>
 <hr>
 <p><strong>主要参考了以下帖子：</strong></p>
@@ -119,6 +120,7 @@ ubuntu下搭建git服务器搭建环境 ubuntu LTS 16.4,客户端使用的是pc�
 <li><a href="http://my.oschina.net/u/146932/blog/197131" target="_blank" rel="external">Ubuntu下 git 服务器的搭建</a></li>
 <li><a href="http://www.cnblogs.com/jeffkuang/articles/4099719.html" target="_blank" rel="external">ubuntu配置git服务器（gitosis）</a></li>
 </ol>
+<p>June 16, 2016 2:47 PM</p>
 
 
   </article>
