@@ -1,0 +1,151 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="google-site-verification" content="" />
+  
+  <title>arcsde10.2远程连接oracle11g</title>
+  <meta name="author" content="Tony">
+   <meta name="description" content="搭建环境arcsde10.2，oracle 11g r2 64位
+具体步骤1.安装oracle 11g r2，教程百度这里需要注意的是，arcgis是32位程序，而我们的数据库是64位数据库，不能直接进行连接，具有介绍可以参考【4】中的介绍。这里需要安装Oracle的32位客户端，推荐使用“ODTw">
+  
+
+  <meta property="og:title" content="arcsde10.2远程连接oracle11g"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta property="og:site_name" content="Tony&#39;s blog"/>
+ <meta property="og:image" content="undefined"/>
+  
+  <link rel="alternate" href="/atom.xml" title="Tony&#39;s blog" type="application/atom+xml">
+  <link rel="stylesheet" href="//cdn.bootcss.com/bootstrap/3.3.6/css/bootstrap.min.css">
+  <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="/css/m.min.css">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+</head>
+
+<body>
+  <div id="main">
+    <div class="behind">
+      <div class="back">
+        <a href="/" class="black-color"><i class="fa fa-times" aria-hidden="true"></i></a>
+      </div>
+      <div class="description">
+        &nbsp;I dont like it, I love love it
+      </div>
+    </div>
+    <div class="container">
+      
+
+  <article class="standard post">
+    <div class="title">
+      
+  
+    <h1 class="page-title center">
+        arcsde10.2远程连接oracle11g
+    </h1>
+  
+
+
+    </div>
+    <div class="meta center">
+      
+<time datetime="2016-06-20T12:05:40.366Z">
+  <i class="fa fa-calendar"></i>&nbsp;
+  2016-06-20
+</time>
+
+
+
+
+
+
+
+    </div>
+    <hr>
+    <div class="picture-container">
+      
+    </div>
+    <p><strong>搭建环境</strong><br>arcsde10.2，oracle 11g r2 64位</p>
+<h4 id="具体步骤"><a href="#具体步骤" class="headerlink" title="具体步骤"></a>具体步骤</h4><p><strong>1.安装oracle 11g r2，教程百度</strong><br>这里需要注意的是，arcgis是32位程序，而我们的数据库是64位数据库，不能直接进行连接，具有介绍可以参考【4】中的介绍。这里需要安装Oracle的32位客户端，推荐使用“ODTwithODAC1120320_32bit”。安装好的oracle文件夹如图所示。</p>
+<p><img src="D:\_code\hexoBlog\source\imgs\client32.jpg" alt="client32.jpg"></p>
+<p>2.<strong>配置Client本地服务名</strong>（具体步骤参考【2】中同名章节的介绍）<br>这里实际上和修改tnsnames.ora文件一样，配置好以后相当于在tnsnames.ora文件中添加了如下代码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">xzhq1=</span><br><span class="line">  (DESCRIPTION=</span><br><span class="line">     (ADDRESS=(PROTOCOL=TCP)(HOST=192.168.***.***)(PORT=1521))</span><br><span class="line">     (CONNECT_DATA=</span><br><span class="line">       (SERVER=DEDICATED)</span><br><span class="line">       (SERVICE_NAME=xzhq1)</span><br><span class="line">     )</span><br><span class="line">  )</span><br></pre></td></tr></table></figure></p>
+<p>其中第一个“xzhq1”表示网络连接服务名，SERVICE_NAME表示数据库SID。</p>
+<p><strong>3.服务创建前配置工作</strong><br>（1）在sdehome\ora11gexe\etc目录中，使用文本编辑器打开文件“dbinit.sde”,在文本编辑器中添加<em>set local = xzhq1</em>其中xzhq1是oracle的网络连接名称。（<strong>这里有个大坑，就是使用步骤4中的“sdeservice”命令来创建“esri_sde”服务时,系统会自动把 set local改回默认的 set oracle_SID,在创建完“esri_sde”服务后，启动该服务之前，记得把ORACLE_SID改回local。</strong>）<br>（2）在sdehome\ora11gexe\etc目录中，使用文本编辑器打开文件“services.sde”，将<em>esri_sde 5151/tcp #ArcSDE for Oracle</em>前面的“#”去掉。并将其复制到“c:\windows\system32\drivers\etc\services”文件的末尾。</p>
+<p><strong>4.使用sdeservice命令创建esri_sde服务来连接数据库</strong><br>（1）使用sdeservice命令创建“esri_sde”服务，具体的参数设置可以参考【5】，需要注意的地方是<strong>在进行远程连接的时候，也就是oracle数据库和arcsde不是安装在一台机器上时，需要添加“-n”参数</strong>，具体命令如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">//千万不要忘记“-n”</span><br><span class="line">sdeservice -o create -d oracle,xzhq1 -i esri_sde -n</span><br></pre></td></tr></table></figure></p>
+<p>(2)启动服务(<strong>记得把dbinit.sde中的“ORACLE_SID”改成“local”</strong>)<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sdemon -o start -i esri_sde//or</span><br><span class="line">sdemon -o start -p sde</span><br></pre></td></tr></table></figure></p>
+<h5 id="参考文档"><a href="#参考文档" class="headerlink" title="参考文档"></a>参考文档</h5><p>1.<a href="http://blog.csdn.net/fengfeiyang/article/details/552478" target="_blank" rel="external">ArcSDE安装详解</a><br>2.<a href="http://wenku.baidu.com/link?url=TmW5fePmlepP7jEUSEgRlqPyO3_MmbfbI4oQ0M-JEO14ABiaSzAlfDeR1x0s1E2GcQiJTyqL-0tJdH_WnWg13cGzlPpm0mJvPBONbKl6Pwq" target="_blank" rel="external">基于Oracle11GR2的ArcSDE10.2安装</a><br>3.<a href="http://wenku.baidu.com/view/4de9462ae2bd960590c67709.html" target="_blank" rel="external">ArcSDE远程连接oracle数据库</a><br>4.<a href="http://server.arcgis.com/zh-cn/server/10.3/publish-services/windows/register-oracle-with-arcgis-server.htm" target="_blank" rel="external">将 Oracle 数据库注册到 ArcGIS Server</a><br>5.<a href="http://wenku.baidu.com/link?url=xPanUtB5SggPsHJOwtMpPQM4hs8zs9Z69VAX95loTFhJmKBJKBn_Yd7RtDm3Z8RMOGs_CnrWLDlBsLuOIJovCBLpLrIybhIKBkM1Tq1aquC" target="_blank" rel="external">sdeservice命令详解</a></p>
+
+
+  </article>
+  </script>
+    <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+  </script>
+  <div class="busuanzi center">
+    页阅读量:&nbsp;<span id="busuanzi_value_page_pv"></span>&nbsp;・&nbsp;
+    站访问量:&nbsp;<span id="busuanzi_value_site_pv"></span>&nbsp;・&nbsp;
+    站访客数:&nbsp;<span id="busuanzi_value_site_uv"></span>
+  </div>
+
+
+
+
+    </div>
+  </div>
+  <footer class="page-footer"><div class="clearfix">
+</div>
+<div class="right-foot container">
+    <div class="firstrow">
+        <a href="#top" >
+        <i class="fa fa-arrow-right"></i>
+        </a>
+        © XXX 2015-2016
+    </div>
+    <div class="secondrow">
+        <a href="https://github.com/gaoryrt/hexo-theme-pln">
+        Theme Pln
+        </a>
+    </div>
+</div>
+<div class="clearfix">
+</div>
+</footer>
+  <script src="//cdn.bootcss.com/jquery/2.2.1/jquery.min.js"></script>
+<script type="text/javascript">
+
+// comments below to disable loading animation
+function revealOnScroll() {
+  var scrolled = $(window).scrollTop();
+  $(".excerpt, .index-title, .index-meta, p").each(function() {
+    var current = $(this),
+      height = $(window).outerHeight(),
+      offsetTop = current.offset().top;
+    (scrolled + height + 50 > offsetTop) ? current.addClass("animation"):'';
+  });
+}
+$(window).on("scroll", revealOnScroll);
+$(document).ready(revealOnScroll)
+
+// disqus scripts
+
+
+// dropdown scripts
+$(".dropdown").click(function(event) {
+  var current = $(this);
+  event.stopPropagation();
+  $(current).children(".dropdown-content")[($(current).children(".dropdown-content").hasClass("open"))?'removeClass':'addClass']("open")
+});
+$(document).click(function(){
+    $(".dropdown-content").removeClass("open");
+})
+
+// back to top scripts
+$("a[href='#top']").click(function() {
+  $("html, body").animate({ scrollTop: 0 }, 500);
+  return false;
+});
+</script>
+
+</body>
+</html>
